@@ -345,7 +345,35 @@ NOTSELF_DATABASE = {
  
 # --- データ読み込み ---
 @st.cache_data
-def load_hd_data(birth_date):
+def get_exact_hd_row(df, target_date, target_time):
+    """
+    入力された日時に最も近い『過去の変化点』を抜き出すわ！
+    これで圧縮データでも100%正確な判定ができるようになるの。
+    """
+    # 1. ユーザーの入力を Python の日時型にガッチャンコする
+    target_dt = pd.to_datetime(f"{target_date} {target_time}")
+    
+    # 2. マスターデータの時間を日時型にする（読み込み時に済ませておくと速いわ）
+    df['JST_Time'] = pd.to_datetime(df['JST_Time'])
+    
+    # 3. 【ここが魔法！】指定時刻以下のデータの中で、一番最後の行（＝その時に有効な状態）を拾う
+    exact_row = df[df['JST_Time'] <= target_dt].sort_values('JST_Time').tail(1)
+    
+    if exact_row.empty:
+        # もし指定時刻より前のデータが1件もなければ、仕方ないので一番最初の行を返す
+        return df.iloc[0]
+        
+    return exact_row.iloc[0]
+
+# --- メイン処理の中での使いかた ---
+# 1. 7つのうちから1つのファイルをロード
+# df = load_hd_data(user_birth_date) 
+
+# 2. その中から「その瞬間」の1行だけを抜き出す
+# row = get_exact_hd_row(df, user_birth_date, user_birth_time)
+
+# 3. この 'row' を使って「タイプ」や「定義タイプ」を表示する
+# st.write(f"あなたの定義は: {row['Definition']}")
     """
     ユーザーが選択した生年月日に基づいて、4つのParquetファイルから最適な1つを読み込むわ！
     """
