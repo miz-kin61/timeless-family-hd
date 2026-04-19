@@ -484,19 +484,19 @@ def style_centers(row):
     styles = [''] * len(row)
     
     # 父
-    if row['父（定義）']:
+    if '父（定義）' in row.index and row['父（定義）']:
         styles[1] = 'background-color: #4CAF50; color: white; font-weight: bold;'
     else:
         styles[1] = 'background-color: #FFEB3B; color: #333; font-weight: bold;'
     
     # 母
-    if row['母（定義）']:
+    if '母（定義）' in row.index and row['母（定義）']:
         styles[2] = 'background-color: #4CAF50; color: white; font-weight: bold;'
     else:
         styles[2] = 'background-color: #FFEB3B; color: #333; font-weight: bold;'
     
     # 本人
-    if row['本人（定義）']:
+    if '本人（定義）' in row.index and row['本人（定義）']:
         styles[3] = 'background-color: #4CAF50; color: white; font-weight: bold;'
     else:
         styles[3] = 'background-color: #FFEB3B; color: #333; font-weight: bold;'
